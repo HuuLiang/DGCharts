@@ -296,3 +296,40 @@ extension CGContext
         drawMultilineText(text, at: point, constrainedTo: size, anchor: anchor, knownTextSize: rect.size, angleRadians: angleRadians, attributes: attributes)
     }
 }
+
+
+extension NSUIColor {
+    var rgba:(red:CGFloat,green:CGFloat,blue:CGFloat,alpha:CGFloat) {
+        var red:CGFloat = 0
+        var green:CGFloat = 0
+        var blue:CGFloat = 0
+        var alpha:CGFloat = 0
+        
+        func _finalInfo() -> (red:CGFloat,green:CGFloat,blue:CGFloat,alpha:CGFloat) {
+            (red:red,green:green,blue:blue,alpha:alpha)
+        }
+        
+        guard let colorSpaceModel = cgColor.colorSpace?.model,
+              colorSpaceModel == .rgb else {
+            return _finalInfo()
+        }
+        getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return _finalInfo()
+    }
+}
+
+public extension CGGradient {
+    static func generateGradient(with colors:[NSUIColor],
+                                 locations:[CGFloat]) -> CGGradient? {
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let components:[CGFloat] = colors.flatMap { (color) -> [CGFloat] in
+            let rgba = color.rgba
+            return [rgba.red,rgba.green,rgba.blue,rgba.alpha]
+        }
+        return CGGradient.init(colorSpace: colorSpace,
+                               colorComponents: components,
+                               locations: locations,
+                               count: locations.count)
+    }
+}
+

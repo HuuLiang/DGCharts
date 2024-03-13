@@ -41,4 +41,21 @@ public protocol BarChartDataSetProtocol: BarLineScatterCandleBubbleChartDataSetP
     var stackLabels: [String] { get set }
     
     var showCorner:Bool {get}
+    
+    var drawGradientEnable:Bool {get}
+    var gradients:[BarChartGradient] {get}
+}
+
+open class BarChartGradient: NSObject {
+    var colors:[NSUIColor]
+    var locations:[CGFloat]
+    
+    public init(colors: [NSUIColor], locations: [CGFloat]) {
+        self.colors = colors
+        self.locations = locations
+    }
+    
+    var gradient:CGGradient? {
+        return CGGradient.generateGradient(with: colors, locations: locations)
+    }
 }

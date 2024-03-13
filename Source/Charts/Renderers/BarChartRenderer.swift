@@ -306,7 +306,9 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         let drawBorder = borderWidth > 0.0
         
         context.saveGState()
-        defer { context.restoreGState() }
+        defer {
+            context.restoreGState()
+        }
         
         // draw the bar shadow before the values
         if dataProvider.isDrawBarShadowEnabled
@@ -366,8 +368,12 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         let isStacked = dataSet.isStacked
         let stackSize = isStacked ? dataSet.stackSize : 1
 
+        let gradients = dataSet.gradients
         for j in buffer.indices
         {
+            context.saveGState()
+            defer { context.restoreGState() }
+            
             let barRect = buffer[j]
             
             guard viewPortHandler.isInBoundsLeft(barRect.origin.x + barRect.size.width) else { continue }
@@ -379,12 +385,27 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 context.setFillColor(dataSet.color(atIndex: j).cgColor)
             }
             
+            context.beginPath()
             if dataSet.showCorner {
                 let bezierPath = UIBezierPath(roundedRect: barRect,
                                               byRoundingCorners: [.topLeft, .topRight],
-                                              cornerRadii:CGSize(width:barRect.width / 2.0,height:barRect.width / 2.0));
+                                              cornerRadii:CGSize(width:barRect.width / 2.0,
+                                                                 height:barRect.width / 2.0));
                 context.addPath(bezierPath.cgPath)
-                context.drawPath(using: .fill)
+            } else {
+                context.addRect(barRect)
+            }
+            context.clip()
+            
+            if dataSet.drawGradientEnable {
+                guard j < gradients.count,let gradient = gradients[j].gradient else {
+                    context.fill(barRect)
+                    return
+                }
+                context.drawLinearGradient(gradient,
+                                           start: .init(x: barRect.midX, y: barRect.minY),
+                                           end: .init(x: barRect.midX, y: barRect.maxY),
+                                           options: [])
             } else {
                 context.fill(barRect)
             }

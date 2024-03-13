@@ -67,6 +67,8 @@ class BarChartViewController: DemoBaseViewController {
         leftAxis.labelPosition = .outsideChart
         leftAxis.spaceTop = 0.15
         leftAxis.axisMinimum = 0 // FIXME: HUH?? this replaces startAtZero = YES
+        leftAxis.axisMaximum = 5
+        leftAxis.granularity = 1
         
         let rightAxis = chartView.rightAxis
         rightAxis.enabled = true
@@ -107,7 +109,8 @@ class BarChartViewController: DemoBaseViewController {
             return
         }
         
-        self.setDataCount(Int(sliderX.value) + 1, range: UInt32(sliderY.value))
+        self.setDataCount(Int(sliderX.value) + 1, range: UInt32(5))
+//        self.setDataCount(Int(sliderX.value) + 1, range: UInt32(sliderY.value))
     }
     
     func setDataCount(_ count: Int, range: UInt32) {
@@ -131,7 +134,13 @@ class BarChartViewController: DemoBaseViewController {
             chartView.notifyDataSetChanged()
         } else {
             set1 = BarChartDataSet(entries: yVals, label: "The year 2017")
-            set1.colors = ChartColorTemplates.material()
+//            set1.colors = ChartColorTemplates.material()
+            set1.colors = [.blue]
+            set1.showCorner = true
+            set1.drawGradientEnable = true
+            set1.gradients = yVals.map({ entry -> BarChartGradient in
+                return BarChartGradient.init(colors: [.red,.blue,.yellow], locations: [0,0.5,1])
+            })
             set1.drawValuesEnabled = false
             
             let data = BarChartData(dataSet: set1)

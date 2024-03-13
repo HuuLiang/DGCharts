@@ -122,6 +122,9 @@ open class BarChartDataSet: BarLineScatterCandleBubbleChartDataSet, BarChartData
     
     ///cornerRaidus
     open var showCorner:Bool = false
+    
+    open var drawGradientEnable:Bool = false
+    open var gradients:[BarChartGradient] = []
 
     /// the alpha value (transparency) that is used for drawing the highlight indicator bar. min = 0.0 (fully transparent), max = 1.0 (fully opaque)
     open var highlightAlpha = CGFloat(120.0 / 255.0)
@@ -139,6 +142,9 @@ open class BarChartDataSet: BarLineScatterCandleBubbleChartDataSet, BarChartData
         copy.barBorderWidth = barBorderWidth
         copy.barBorderColor = barBorderColor
         copy.highlightAlpha = highlightAlpha
+        copy.showCorner     = showCorner
+        copy.drawGradientEnable     = drawGradientEnable
+        copy.gradients = gradients
         return copy
     }
 }
